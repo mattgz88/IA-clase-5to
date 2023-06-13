@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Compatibilidad-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Responsividad-->
+  <meta name="description" content="Variante de ChatGPT"> <!-- Descripcion-->
+  <link rel="icon" href="favicon.ico" type="image/x-icon"> <!--Icono de la pagina-->
+
+  <!--BOOTSTRAP CSS y JS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="main.css"> <!--CSS-->
+  <script src="script.js"></script> <!--JAVASCRIPT-->
+  <title>Document</title>
+</head>
+
+<body class="bg-success"> <!--data-bs-theme=dark-->
+  <div class="mx-auto text-center rounded shadow p-4 px-5 tarjeta">
+    <h1 class="text-dark mb-4">FroGPT</h1>
+
+    <div class="d-inline-flex mb-4">
+      <input class="form-control bg-dark-subtle border-success-subtle p-2 me-1" type="text" id="inputText"
+        placeholder="Ingresa el texto">
+      <button type="button" class="btn btn-outline-dark" onclick="sendQuestion()">Enviar</button>
+    </div>
+
+    <textarea class="form-control" id="responseText" readonly></textarea> <!-- style="resize: none"-->
+
+    <button class="btn btn-outline-dark mt-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"
+      aria-controls="offcanvas">
+      Configuración
+    </button>
+  </div>
+
+
+
+  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+
+    <div class="offcanvas-header" data-bs-theme="dark">
+      <h4 class="offcanvas-title text-primary text-opacity-50" id="offcanvasExampleLabel">Configuracion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mt-2 pe-5">
+
+      <!--TEMPERATURA-->
+      <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample" role="button"
+        aria-expanded="false" aria-controls="collapseExample">
+        <h3 class="text-success text-opacity-75">
+          Temperatura
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+            <path
+              d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+          </svg>
+        </h3>
+      </a>
+      <div class="collapse mb-2" id="collapseExample">
+        <div class="card card-body bg-success p-2 text-dark">
+          Al cambiar el valor de la temperatura, se regula el rango de variedad que hay en las respuestas.
+        </div>
+      </div>
+      <div class="d-flex mb-5">
+        <input type="number" class="form-control-sm border-opacity-0 pe-1 me-2" style="width: 15%;" id="temperatureNum">
+        <input class="form-range align-self-center" type="range" id="temperatureSlider" min="0" max="1" step="0.01" value="<%= temperature%>">
+      </div>
+
+      <!--Cant. máxima de tokens-->
+      <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample1" role="button"
+        aria-expanded="false" aria-controls="collapseExample1">
+        <h3 class="text-success text-opacity-75">
+          Cant. máxima de tokens
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+            <path
+              d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+          </svg>
+        </h3>
+      </a>
+      <div class="collapse mb-2" id="collapseExample1">
+        <div class="card card-body bg-success p-2 text-dark">
+          Al variar su valor, varía el largo de la respuesta.
+        </div>
+      </div>
+      <div class="d-flex mb-5">
+        <input type="number" class="form-control-sm border-opacity-0 pe-0 me-2" style="width: 15%;" id="maxTokensNum">
+        <input class="form-range align-self-center" type="range" id="maxTokensSlider" min="50" max="1000" step="10" value="<%= maxTokens%>">
+      </div>
+
+      <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample2" role="button"
+        aria-expanded="false" aria-controls="collapseExample2">
+        <h2 class="text-success text-opacity-75">
+          Modelos
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+            <path
+              d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+          </svg>
+        </h2>
+      </a>
+      <div class="collapse" id="collapseExample2">
+        <div class="card card-body bg-success p-2 text-dark">
+          Elegir el modelo de la IA (las respuestas suelen variar segun el modelo).
+        </div>
+      </div>
+
+      <div class="mt-2 ms-2">
+        <div class="form-check">
+          <input class="form-check-input checkboxs" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="0" checked>
+          <label class="form-check-label" for="flexRadioDefault1">
+            Text-davinci-003
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input checkboxs" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="1">
+          <label class="form-check-label" for="flexRadioDefault2">
+            Text-davinci-002
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input checkboxs" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="2">
+          <label class="form-check-label" for="flexRadioDefault2">
+            GPT-3.5-turbo
+          </label>
+        </div>
+      </div>
+
+      <div class="mt-5 d-grid gap-2 d-sm-flex justify-content-sm-end">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="offcanvas">Cerrar</button>
+        <button type="button" class="btn btn-warning">Resetear</button>
+        <button class="btn btn-success" onclick="saveConfig()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
